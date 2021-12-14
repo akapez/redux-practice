@@ -1,4 +1,5 @@
 Packages:
-
+```
 React-redux
-Redux/toolkit
+Redux-toolkit
+```
