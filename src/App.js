@@ -1,19 +1,50 @@
-import { useDispatch, useSelector } from 'react-redux';
-import {actionCreators} from './actions/index';
-import { bindActionCreators } from 'redux';
+import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import ReservationCard from './components/ReservationCard';
+import { addReservation } from './features/reservationSlice';
 import './App.css';
+import CustomerCard from './components/CustomerCard';
 
 function App() {
-  const dispatch = useDispatch();
-  const account = useSelector((state) => state.account);
+  const [reservationName, setReservationName] = useState('');
+  const reservations = useSelector((state) => state.reservations.value);
+  const customers = useSelector((state) => state.customers.value);
 
-  const {depositMoney, withdrawMoney} = bindActionCreators(actionCreators, dispatch);
+
+  const dispatch = useDispatch();
+
+  const handleChangeAddReservation = () => {
+    if (!reservationName) return;
+    dispatch(addReservation(reservationName));
+    setReservationName('');
+  };
 
   return (
     <div className='App'>
-      <h2>{account}</h2>
-      <button onClick={() => depositMoney(100)}>Deposit</button>
-      <button onClick={() => withdrawMoney(50)}>Withdraw</button>
+      <div className='container'>
+        <div className='reservation-container'>
+          <div>
+            <h5 className='reservation-header'>Reservations</h5>
+            <div className='reservation-cards-container'>
+              {reservations.map((name, index) => {
+                return <ReservationCard key={index} name={name} index={index} />;
+              })}
+            </div>
+          </div>
+          <div className='reservation-input-container'>
+            <input
+              value={reservationName}
+              onChange={(e) => setReservationName(e.target.value)}
+            />
+            <button onClick={handleChangeAddReservation}>Add</button>
+          </div>
+        </div>
+        <div className='customer-food-container'>
+         {customers.map((customer) => {
+           return <CustomerCard key={customer.id} id={customer.id} name={customer.name} food={customer.food} />
+         })}
+        </div>
+      </div>
     </div>
   );
 }
